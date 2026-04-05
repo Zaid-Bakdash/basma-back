@@ -2,12 +2,14 @@ import express from 'express';
 import mongoose from 'mongoose';
 import auth from './middleware/auth'; 
 import path from 'path';
+import swaggerUi from 'swagger-ui-express';
 import { Req } from './types';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
 import labelRoutes from './routes/label';
 import taskRoutes from './routes/task';
 import projectRoutes from './routes/project';
+import swaggerSpec from './docs/swagger';
 
 
 const app = express();
@@ -15,6 +17,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.get('/docs.json', (req, res) => {
+    res.json(swaggerSpec);
+});
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/auth',authRoutes);
 app.use('/user', auth ,userRoutes);
