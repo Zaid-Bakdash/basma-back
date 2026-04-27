@@ -19,6 +19,7 @@ const swaggerSpec = {
         { name: 'Labels', description: 'Label management endpoints' },
         { name: 'Tasks', description: 'Standalone task endpoints' },
         { name: 'Projects', description: 'Project and project-task endpoints' },
+        { name: 'Workflows', description: 'Automation and workflow management' },
     ],
     components: {
         securitySchemes: {
@@ -176,6 +177,51 @@ const swaggerSpec = {
                         type: 'string',
                         format: 'binary',
                     },
+                },
+            },
+            WorkflowNode: {
+                type: 'object',
+                properties: {
+                    id: { type: 'string' },
+                    type: { type: 'string' },
+                    position: {
+                        type: 'object',
+                        properties: {
+                            x: { type: 'number' },
+                            y: { type: 'number' },
+                        },
+                    },
+                    data: { type: 'object' },
+                },
+            },
+            WorkflowEdge: {
+                type: 'object',
+                properties: {
+                    id: { type: 'string' },
+                    source: { type: 'string' },
+                    target: { type: 'string' },
+                    data: { type: 'object' },
+                },
+            },
+            Workflow: {
+                type: 'object',
+                properties: {
+                    _id: { type: 'string' },
+                    name: { type: 'string' },
+                    nodes: { type: 'array', items: { $ref: '#/components/schemas/WorkflowNode' } },
+                    edges: { type: 'array', items: { $ref: '#/components/schemas/WorkflowEdge' } },
+                    user: { type: 'string' },
+                    createdAt: { type: 'string', format: 'date-time' },
+                    updatedAt: { type: 'string', format: 'date-time' },
+                },
+            },
+            WorkflowRequest: {
+                type: 'object',
+                required: ['name', 'nodes', 'edges'],
+                properties: {
+                    name: { type: 'string', example: 'Log Automation' },
+                    nodes: { type: 'array', items: { $ref: '#/components/schemas/WorkflowNode' } },
+                    edges: { type: 'array', items: { $ref: '#/components/schemas/WorkflowEdge' } },
                 },
             },
         },
@@ -688,6 +734,79 @@ const swaggerSpec = {
                     '200': {
                         description: 'Project task deleted',
                     },
+                },
+            },
+        },
+        '/workflow': {
+            post: {
+                tags: ['Workflows'],
+                summary: 'Create a new workflow',
+                security: [{ bearerAuth: [] }],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/WorkflowRequest' },
+                        },
+                    },
+                },
+                responses: {
+                    '201': { description: 'Workflow created' },
+                },
+            },
+            get: {
+                tags: ['Workflows'],
+                summary: 'Get all user workflows',
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    '200': { description: 'List of workflows' },
+                },
+            },
+        },
+        '/workflow/{id}': {
+            get: {
+                tags: ['Workflows'],
+                summary: 'Get workflow by id',
+                security: [{ bearerAuth: [] }],
+                parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+                responses: {
+                    '200': { description: 'Workflow details' },
+                },
+            },
+            patch: {
+                tags: ['Workflows'],
+                summary: 'Update workflow',
+                security: [{ bearerAuth: [] }],
+                parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+                requestBody: {
+                    required: true,
+                    content: { 'application/json': { schema: { $ref: '#/components/schemas/WorkflowRequest' } } },
+                },
+                responses: {
+                    '200': { description: 'Workflow updated' },
+                },
+            },
+            delete: {
+                tags: ['Workflows'],
+                summary: 'Delete workflow',
+                security: [{ bearerAuth: [] }],
+                parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+                responses: {
+                    '200': { description: 'Workflow deleted' },
+                },
+            },
+        },
+        '/workflow/run': {
+            post: {
+                tags: ['Workflows'],
+                summary: 'Simulate automation execution',
+                security: [{ bearerAuth: [] }],
+                requestBody: {
+                    required: true,
+                    content: { 'application/json': { schema: { $ref: '#/components/schemas/WorkflowRequest' } } },
+                },
+                responses: {
+                    '200': { description: 'Automation run processed' },
                 },
             },
         },

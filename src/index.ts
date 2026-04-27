@@ -9,6 +9,7 @@ import userRoutes from './routes/user';
 import labelRoutes from './routes/label';
 import taskRoutes from './routes/task';
 import projectRoutes from './routes/project';
+import workflowRoutes from './routes/workflow';
 import swaggerSpec from './docs/swagger';
 
 
@@ -27,6 +28,7 @@ app.use('/user', auth ,userRoutes);
 app.use('/label',auth,labelRoutes);
 app.use('/task',auth,taskRoutes);
 app.use('/project',auth,projectRoutes);
+app.use('/workflow',auth,workflowRoutes);
 
 
 app.use((error: any, req: Req, res: express.Response, next: express.NextFunction) => {
@@ -110,5 +112,3 @@ mongoose.connect('mongodb://localhost:27017/')
         app.listen(3000);
         console.log('app listing','http://localhost:3000');
     }).catch(err=>console.log(err));
-
-

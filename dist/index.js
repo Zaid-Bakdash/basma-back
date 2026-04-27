@@ -13,6 +13,7 @@ const user_1 = __importDefault(require("./routes/user"));
 const label_1 = __importDefault(require("./routes/label"));
 const task_1 = __importDefault(require("./routes/task"));
 const project_1 = __importDefault(require("./routes/project"));
+const workflow_1 = __importDefault(require("./routes/workflow"));
 const swagger_1 = __importDefault(require("./docs/swagger"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -27,6 +28,7 @@ app.use('/user', auth_1.default, user_1.default);
 app.use('/label', auth_1.default, label_1.default);
 app.use('/task', auth_1.default, task_1.default);
 app.use('/project', auth_1.default, project_1.default);
+app.use('/workflow', auth_1.default, workflow_1.default);
 app.use((error, req, res, next) => {
     if (error instanceof Error && (error.message === 'Only image files are allowed!' ||
         error.message === 'Image files are not allowed!' ||
